@@ -1,23 +1,40 @@
-const ffmpeg = require('fluent-ffmpeg')
+// const ffmpeg = require('fluent-ffmpeg')
+const { FFmpeg, ffprobe, ffprobeSync } = require("kiss-ffmpeg");
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs');
+const { createBrotliCompress } = require("zlib");
 
 /* Converts video file to an avi file with large key frame interval 
    (video format conducive for glitching) */
 const convertToAvi = (inDir, outDir) => {
     const maxGOP = 999999 // Arbitrarily large Key Frame Interval
     return new Promise((resolve, reject) => {
-        ffmpeg(inDir)
-            .videoCodec('libxvid')
-            .output(outDir)
-            .outputOptions('-g ' + maxGOP)
-            .on('error', (err) => {
-                reject(err)
-            })
-            .on('end', () => {
-                resolve()
-            })
-            .run()
+        // ffmpeg(inDir)
+        //     .videoCodec('libxvid')
+        //     .output(outDir)
+        //     .outputOptions('-g ' + maxGOP)
+        //     .on('error', (err) => {
+        //         reject(err)
+        //     })
+        //     .on('end', () => {
+        //         resolve()
+        //     })
+        //     .run()
+        new FFmpeg({
+            inputs: inDir,
+            outputs: {
+                url: outDir,
+                options: '-c:v libxvid -g ' + maxGOP
+            }
+        })
+        .on('error', (proc, err) => {
+            reject(err);
+        })
+        .on('end', () => {
+            console.log('conversion to avi successful')
+            resolve()
+        })
+        .run()
     })
 }
 
@@ -26,24 +43,48 @@ const convertToAvi = (inDir, outDir) => {
    and copyinkf, so it copies non-keyframes at the beginning (essential for datamoshing). */
 const clipVideo = (inDir, outDir, inTime, outTime) => {
     return new Promise((resolve, reject) => {
-        let clip = ffmpeg(inDir)
+        // let clip = ffmpeg(inDir)
+        // if (inTime != null) {
+        //     clip.seek(inTime)
+        // }
+        // if (outTime != null) {
+        //     clip.inputOptions('-to ' + outTime.toString())
+        // }
+        // clip.output(outDir)
+        //     .videoCodec('copy')
+        //     .audioCodec('copy')
+        //     .outputOptions('-copyinkf')
+        //     .on('error', (err) => {
+        //         reject(err)
+        //     })
+        //     .on('end', () => {
+        //         resolve()
+        //     })
+        //     .run()
+        let clip = new FFmpeg({
+            inputs: {
+                url: inDir,
+            },
+            outputs: {
+                url: outDir,
+                options: '-c:v copy -c:a copy -copyinkf'
+            }
+        })
         if (inTime != null) {
-            clip.seek(inTime)
+            clip.outputs.options += ' -ss ' + inTime.toString()
         }
         if (outTime != null) {
-            clip.inputOptions('-to ' + outTime.toString())
+            clip.inputs.options = '-to ' + outTime.toString()
         }
-        clip.output(outDir)
-            .videoCodec('copy')
-            .audioCodec('copy')
-            .outputOptions('-copyinkf')
-            .on('error', (err) => {
-                reject(err)
-            })
-            .on('end', () => {
-                resolve()
-            })
-            .run()
+        clip
+        .on('error', (proc, err) => {
+            reject(err);
+        })
+        .on('end', () => {
+            console.log('clipping successful')
+            resolve()
+        })
+        .run()
     })
 }
 
@@ -55,14 +96,29 @@ const concatVids = (dirList, outDir) => {
         concatString += '|' + dirList[i]
     }
     return new Promise((resolve, reject) => {
-        ffmpeg(concatString)
-        .output(outDir)
-        .videoCodec('copy')
-        .audioCodec('copy')
-        .on('error', (err) => {
-            reject(err)
+        // ffmpeg(concatString)
+        // .output(outDir)
+        // .videoCodec('copy')
+        // .audioCodec('copy')
+        // .on('error', (err) => {
+        //     reject(err)
+        // })
+        // .on('end', () => {
+        //     resolve()
+        // })
+        // .run()
+        new FFmpeg({
+            inputs: concatString,
+            outputs: {
+                url: outDir,
+                options: '-c copy'
+            }
+        })
+        .on('error', (proc, err) => {
+            reject(err);
         })
         .on('end', () => {
+            console.log('concatenation successful')
             resolve()
         })
         .run()

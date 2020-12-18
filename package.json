@@ -10,6 +10,7 @@
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "hbs": "^4.1.1",
+    "kiss-ffmpeg": "^0.3.0",
     "nodemon": "^2.0.4",
     "passport": "^0.4.1",
     "rimraf": "^3.0.2"
