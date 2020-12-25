@@ -2,7 +2,6 @@
 const { FFmpeg, ffprobe, ffprobeSync } = require("kiss-ffmpeg");
 const path = require('path')
 const fs = require('fs');
-const { createBrotliCompress } = require("zlib");
 
 /* Converts video file to an avi file with large key frame interval 
    (video format conducive for glitching) */
@@ -125,8 +124,29 @@ const concatVids = (dirList, outDir) => {
     })
 }
 
+const getIFrameInfo = async (inDir, ffprobePath) => {
+    frameInfo = await ffprobe(inDir, {
+        command: ffprobePath,
+        select_streams: 'v',
+        show_frames: null,
+        show_entries:'frame=pict_type',
+    })
+    const secondsPerFrame = frameInfo.streams[0].duration / frameInfo.frames.length
+    let iFrameTimestamps = []
+    for (i = 0; i < frameInfo.frames.length; i++) {
+        if (frameInfo.frames[i].pict_type == 'I') {
+            iFrameTimestamps.push(i * secondsPerFrame)
+        } 
+    }
+    return {
+        timestamps: iFrameTimestamps,
+        secondsPerFrame: secondsPerFrame
+    }
+}
+
 module.exports = {
     convertToAvi: convertToAvi,
     clipVideo: clipVideo,
-    concatVids: concatVids
+    concatVids: concatVids,
+    getIFrameInfo: getIFrameInfo,
 }

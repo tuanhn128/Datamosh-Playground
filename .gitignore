@@ -2,5 +2,4 @@
 node_modules
 misc
 vids
-src/utils/i-frame-delete.js
 src/index.js
