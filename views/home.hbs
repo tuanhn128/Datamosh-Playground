@@ -11,20 +11,44 @@
 
 <body>
     <h1>
-        P-Frame Duplication (Bloom Effect)
-    </h1>
-    <div>
-        <p>Video File: </p>
-        <p>Loop Start Time: </p>
-        <p>Loop End Time: </p>
-        <p>Number of Loops: </p>
-    </div>
-
-    <h1>
         I-Frame Deletion
     </h1>
     <div>
-        <p>Video File (Include multiple to combine and mosh): </p>
+        <form method='POST' action='/idelete' enctype="multipart/form-data">
+        <label for="vid_file">Video File: </label>
+        <input type="file" name="vid_file">
+        <br>
+        <button type="submit">Download Datamosh!</button>
+        </form>
+    </div>
+
+    <h1>
+        P-Frame Duplication (Bloom Effect)
+    </h1>
+    <div>
+        <form method='POST' action='/pdupe' enctype="multipart/form-data">
+            <label for="vid_file">Video File: </label>
+            <input type="file" name="vid_file">
+            <br>
+            <label for="loop_start_min">Loop Start Time (Min:Sec): </label>
+            <input type="number" min=0 name="loop_start_min">
+            <label for="loop_start_sec">:</label>
+            <input type="number" min=0 max=59 name="loop_start_sec">
+            <label for="loop_start_ms">.</label>
+            <input type="number" min=0 max=99 name="loop_start_ms">
+            <br>
+            <label for="loop_end_min">Loop End Time (Min:Sec): </label>
+            <input type="number" min=0 name="loop_end_min">
+            <label for="loop_end_sec">:</label>
+            <input type="number" min=0 max=59 name="loop_end_sec">
+            <label for="loop_end_ms">.</label>
+            <input type="number" min=0 max=99 name="loop_end_ms">
+            <br>
+            <label for="num_loops">Number of Loops: </label>
+            <input type="number" name="num_loops">
+            <br>
+            <button type="submit">Download Datamosh!</button>
+        </form>
     </div>
 </body>
 
