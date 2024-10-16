@@ -1,5 +1,4 @@
-// const ffmpeg = require('fluent-ffmpeg')
-const { FFmpeg, ffprobe, ffprobeSync } = require("kiss-ffmpeg");
+const { FFmpeg, ffprobe } = require("kiss-ffmpeg");
 const path = require('path')
 const fs = require('fs');
 
@@ -8,17 +7,6 @@ const fs = require('fs');
 const convertToAvi = (inDir, outDir) => {
     const maxGOP = 999999 // Arbitrarily large Key Frame Interval
     return new Promise((resolve, reject) => {
-        // ffmpeg(inDir)
-        //     .videoCodec('libxvid')
-        //     .output(outDir)
-        //     .outputOptions('-g ' + maxGOP)
-        //     .on('error', (err) => {
-        //         reject(err)
-        //     })
-        //     .on('end', () => {
-        //         resolve()
-        //     })
-        //     .run()
         new FFmpeg({
             inputs: inDir,
             outputs: {
@@ -42,24 +30,6 @@ const convertToAvi = (inDir, outDir) => {
    and copyinkf, so it copies non-keyframes at the beginning (essential for datamoshing). */
 const clipVideo = (inDir, outDir, inTime, outTime) => {
     return new Promise((resolve, reject) => {
-        // let clip = ffmpeg(inDir)
-        // if (inTime != null) {
-        //     clip.seek(inTime)
-        // }
-        // if (outTime != null) {
-        //     clip.inputOptions('-to ' + outTime.toString())
-        // }
-        // clip.output(outDir)
-        //     .videoCodec('copy')
-        //     .audioCodec('copy')
-        //     .outputOptions('-copyinkf')
-        //     .on('error', (err) => {
-        //         reject(err)
-        //     })
-        //     .on('end', () => {
-        //         resolve()
-        //     })
-        //     .run()
         let clip = new FFmpeg({
             inputs: {
                 url: inDir,

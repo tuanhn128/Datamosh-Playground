@@ -4,8 +4,7 @@ const fs = require('fs')
 
 const iFrameDelete = async (inDir, resultDir, tmpPath, moshID, ffprobePath) => {
     /* Convert original video to an avi with a large keyframe interval */
-    // const aviDir = path.join(tmpPath, moshID + "_max_int.avi")
-    const aviDir = 'vids/fly_avi_test2.avi'
+    const aviDir = path.join(tmpPath, moshID + "_max_int.avi")
     await vid.convertToAvi(inDir, aviDir)
 
     /* Get indices of all i-frames*/
